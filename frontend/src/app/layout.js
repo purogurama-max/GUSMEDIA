@@ -12,7 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="id">
       <head>
-        <title>PROXIMEDIA — Enterprise Software Solutions</title>
+        <title>GUSMEDIA — Enterprise Software Solutions</title>
         <link rel="icon" href="/logo.jpg" />
       </head>
       <body className="antialiased bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-between selection:bg-[#2D9CFF] selection:text-white">

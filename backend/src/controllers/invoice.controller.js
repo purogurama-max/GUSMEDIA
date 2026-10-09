@@ -104,9 +104,51 @@ const updateInvoiceStatus = async (req, res, next) => {
   }
 };
 
+// POST /api/invoices/:id/sync-status — Sync payment_status base on actual payments recorded
+const syncInvoiceStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedInvoice = await InvoiceModel.recalculatePaymentStatus(id);
+
+    if (!updatedInvoice) {
+      return res.status(404).json({ success: false, message: 'Invoice not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Invoice status synchronized with payment total',
+      data: updatedInvoice,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE /api/invoices/:id — Delete invoice and associated payments
+const deleteInvoice = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deleted = await InvoiceModel.delete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'Invoice not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Invoice #${deleted.invoice_number} deleted successfully`,
+      data: deleted,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getInvoices,
   getInvoiceById,
   createInvoiceFromOrder,
   updateInvoiceStatus,
+  syncInvoiceStatus,
+  deleteInvoice,
 };

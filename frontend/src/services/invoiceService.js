@@ -81,3 +81,41 @@ export async function updateInvoiceStatusApi(id, paymentStatus, customToken) {
     return { success: false, message: error.message };
   }
 }
+
+export async function syncInvoiceStatusApi(id, customToken) {
+  try {
+    const token = customToken || getToken();
+    const res = await fetch(`${API_BASE_URL}/invoices/${id}/sync-status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error(`Error syncing payment status for invoice ${id}:`, error);
+    return { success: false, message: error.message };
+  }
+}
+
+export async function deleteInvoiceApi(id, customToken) {
+  try {
+    const token = customToken || getToken();
+    const res = await fetch(`${API_BASE_URL}/invoices/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error(`Error deleting invoice ${id}:`, error);
+    return { success: false, message: error.message };
+  }
+}

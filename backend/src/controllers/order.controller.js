@@ -125,9 +125,49 @@ const updateOrderStatus = async (req, res, next) => {
   }
 };
 
+// PUT /api/orders/:id — Update order (items, price, discount, tax, notes)
+const updateOrder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const existing = await OrderModel.findById(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    const updatedOrder = await OrderModel.updateOrder(id, req.body);
+    res.status(200).json({ success: true, data: updatedOrder });
+  } catch (err) {
+    if (err.message && err.message.includes('invoice')) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    next(err);
+  }
+};
+
+// DELETE /api/orders/:id — Delete order
+const deleteOrder = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const existing = await OrderModel.findById(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    await OrderModel.deleteOrder(id);
+    res.status(200).json({ success: true, message: 'Order deleted successfully' });
+  } catch (err) {
+    if (err.message && err.message.includes('invoice')) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    next(err);
+  }
+};
+
 module.exports = {
   getOrders,
   getOrderById,
   createOrder,
   updateOrderStatus,
+  updateOrder,
+  deleteOrder,
 };

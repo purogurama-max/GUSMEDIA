@@ -79,17 +79,10 @@ export default function AdminLayout({ children }) {
         <div>
           {/* Admin Header */}
           <div className="h-16 px-6 flex items-center gap-3 border-b border-slate-800">
-            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-blue-500/20">
-              <img src="/logo.jpg" alt="PROXIMEDIA Logo" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <span className="font-extrabold text-white text-base tracking-tight block">
-                PROXI<span className="text-cyan-400">MEDIA</span> Admin
-              </span>
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                Management System
-              </span>
-            </div>
+            <Link href="/admin" className="flex items-center gap-2">
+              <img src="/logo.jpg" alt="GUSMEDIA Logo" className="h-9 w-auto object-contain" />
+              <span className="font-extrabold text-white text-sm tracking-tight">Admin</span>
+            </Link>
           </div>
 
           {/* Navigation Links */}
@@ -130,7 +123,7 @@ export default function AdminLayout({ children }) {
                 {currentUser?.name || "Administrator"}
               </div>
               <div className="text-[10px] text-slate-400 truncate">
-                {currentUser?.email || "admin@proximedia.com"}
+                {currentUser?.email || "admin@gusmedia.com"}
               </div>
             </div>
           </div>

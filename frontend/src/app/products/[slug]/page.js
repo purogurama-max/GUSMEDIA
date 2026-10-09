@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchProductBySlug, formatCurrency } from "@/services/productService";
-import { CheckCircle2, Shield, Cpu, Server, ArrowLeft, ShoppingBag } from "lucide-react";
+import { CheckCircle2, Shield, Cpu, Server, ArrowLeft } from "lucide-react";
+import OrderForm from "@/components/OrderForm";
 
 export const revalidate = 0; // Dynamic fetching
 
@@ -32,41 +33,45 @@ export default async function ProductDetailPage({ params, searchParams }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       <Link
         href="/products"
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-cyan-400 transition-colors"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-[#2D9CFF] transition-colors"
       >
-        <ArrowLeft className="w-4 h-4" /> Back to Products
+        <ArrowLeft className="w-4 h-4" /> Kembali ke Katalog Produk
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Info */}
         <div className="lg:col-span-2 space-y-8">
-          <div>
-            <span className="text-xs font-semibold px-3 py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              {product.category_name || "Enterprise"}
+          <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+            <span className="text-xs font-bold px-3.5 py-1.5 rounded-lg bg-blue-50 text-[#2D9CFF] border border-blue-200">
+              {product.category_name || "Enterprise Solution"}
             </span>
-            <h1 className="text-4xl font-extrabold text-white mt-4">{product.name}</h1>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-4 tracking-tight">
+              {product.name}
+            </h1>
             
             {product.image && (
-              <div className="mt-6 w-full h-72 rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-xl">
+              <div className="mt-6 w-full h-80 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
                 <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
               </div>
             )}
 
-            <p className="text-slate-300 text-lg mt-6 leading-relaxed">{product.description}</p>
+            <p className="text-slate-600 text-base sm:text-lg mt-6 leading-relaxed font-medium">
+              {product.description}
+            </p>
           </div>
 
           {/* Key Features */}
-          <div className="p-8 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Cpu className="w-5 h-5 text-cyan-400" /> Key Features
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <Cpu className="w-5 h-5 text-[#2D9CFF]" /> Fitur Utama (Key Features)
             </h2>
-            <ul className="space-y-3">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
               {features.map((feat, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-slate-300 text-sm">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+                <li key={idx} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                   <span>{feat}</span>
                 </li>
               ))}
@@ -74,15 +79,15 @@ export default async function ProductDetailPage({ params, searchParams }) {
           </div>
 
           {/* Technical Specifications */}
-          <div className="p-8 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-4">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Server className="w-5 h-5 text-blue-400" /> Technical Specifications
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+            <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <Server className="w-5 h-5 text-[#2D9CFF]" /> Spesifikasi Teknis
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               {Object.entries(specifications).map(([key, val], idx) => (
-                <div key={idx} className="p-4 rounded-xl bg-slate-950/60 border border-slate-800">
-                  <div className="text-xs text-slate-500 capitalize">{key}</div>
-                  <div className="text-sm font-medium text-slate-200 mt-1">{val}</div>
+                <div key={idx} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">{key}</div>
+                  <div className="text-sm font-bold text-slate-800 mt-1">{val}</div>
                 </div>
               ))}
             </div>
@@ -91,72 +96,35 @@ export default async function ProductDetailPage({ params, searchParams }) {
 
         {/* Order Card / Form */}
         <div className="space-y-6">
-          <div className="p-8 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-6 sticky top-24">
-            <div className="flex items-center justify-between pb-6 border-b border-slate-800">
+          <div className="p-8 rounded-2xl bg-white border border-slate-200 shadow-lg space-y-6 sticky top-24">
+            <div className="flex items-center justify-between pb-6 border-b border-slate-100">
               <div>
-                <div className="text-xs text-slate-400">License Price</div>
-                <div className="text-2xl font-bold text-cyan-400 mt-1">{formatCurrency(product.price)}</div>
+                <div className="text-xs font-semibold text-slate-400">Harga Lisensi</div>
+                <div className="text-3xl font-black text-[#2D9CFF] mt-1">{formatCurrency(product.price)}</div>
               </div>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 {product.status || "ACTIVE"}
               </span>
             </div>
 
             {isOrderMode ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-cyan-400 text-sm font-semibold">
-                  <ShoppingBag className="w-4 h-4" /> Place Order Request
-                </div>
-                <form className="space-y-3">
-                  <div>
-                    <label className="block text-xs text-slate-400 mb-1">Company / Organization</label>
-                    <input
-                      type="text"
-                      placeholder="PT Example Indonesia"
-                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-slate-400 mb-1">Contact Email</label>
-                    <input
-                      type="email"
-                      placeholder="procurement@company.com"
-                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-slate-400 mb-1">Quantity</label>
-                    <input
-                      type="number"
-                      defaultValue={1}
-                      min={1}
-                      className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-500"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 transition-all mt-2"
-                  >
-                    Submit Order Request
-                  </button>
-                </form>
-              </div>
+              <OrderForm product={product} />
             ) : (
               <div className="space-y-4">
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Includes software source/license package, configuration support, and standard SLA maintenance.
+                <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                  Paket sudah termasuk lisensi software, dokumen arsitektur, panduan konfigurasi, dan dukungan SLA standar enterprise.
                 </p>
                 <Link
                   href={`/products/${product.slug}?order=true`}
-                  className="block text-center w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-sm font-bold shadow-lg shadow-cyan-500/25 transition-all"
+                  className="block text-center w-full py-3.5 rounded-xl bg-[#2D9CFF] hover:bg-[#1E7EC8] text-white text-sm font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95"
                 >
-                  Order Software Now
+                  Pesan Lisensi Software
                 </Link>
               </div>
             )}
 
-            <div className="pt-4 border-t border-slate-800 flex items-center justify-center gap-2 text-xs text-slate-500">
-              <Shield className="w-4 h-4 text-slate-400" /> Guaranteed Enterprise SLA Support
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs font-semibold text-slate-500">
+              <Shield className="w-4 h-4 text-[#2D9CFF]" /> Guaranteed Enterprise SLA Support
             </div>
           </div>
         </div>
@@ -164,3 +132,4 @@ export default async function ProductDetailPage({ params, searchParams }) {
     </div>
   );
 }
+

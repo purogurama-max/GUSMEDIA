@@ -7,13 +7,20 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  database: process.env.DB_NAME || 'sales_dashboard_db',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-});
+const poolConfig = process.env.DATABASE_URL
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.DB_SSL === 'false' ? false : { rejectUnauthorized: false },
+    }
+  : {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      database: process.env.DB_NAME || 'sales_dashboard_db',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+    };
+
+const pool = new Pool(poolConfig);
 
 const categories = [
   {
@@ -45,16 +52,16 @@ const categories = [
 
 const products = [
   {
-    name: 'PROXIMEDIA ERP Enterprise',
-    slug: 'proximedia-erp-enterprise',
+    name: 'GUSMEDIA ERP Enterprise',
+    slug: 'gusmedia-erp-enterprise',
     description: 'Solusi ERP lengkap untuk perusahaan menengah dan besar. Integrasi penuh antara modul keuangan, inventori, HR, dan produksi dalam satu platform terpadu.',
     price: 150000000,
     category_slug: 'erp-system',
     status: 'ACTIVE',
   },
   {
-    name: 'PROXIMEDIA ERP Lite',
-    slug: 'proximedia-erp-lite',
+    name: 'GUSMEDIA ERP Lite',
+    slug: 'gusmedia-erp-lite',
     description: 'ERP versi ringan untuk UKM. Kelola keuangan, stok, dan pembelian dengan mudah tanpa kerumitan sistem enterprise.',
     price: 45000000,
     category_slug: 'erp-system',
@@ -160,7 +167,7 @@ async function seed() {
     if (settingsExist.rows.length === 0) {
       await client.query(`
         INSERT INTO company_settings (company_name, company_email, company_phone, company_address)
-        VALUES ('PROXIMEDIA', 'info@proximedia.com', '+62 21 5558 9000', 'Jakarta Tech Hub, Level 14, Jl. Sudirman No.1, Jakarta 10220')
+        VALUES ('GUSMEDIA', 'info@gusmedia.com', '+62 21 5558 9000', 'Jakarta Tech Hub, Level 14, Jl. Sudirman No.1, Jakarta 10220')
       `);
       console.log('  ✅ Company settings created');
     } else {
@@ -169,15 +176,15 @@ async function seed() {
 
     // Seed admin user
     console.log('\n👤 Seeding admin user...');
-    const adminExist = await client.query('SELECT id FROM users WHERE email = $1', ['admin@proximedia.com']);
+    const adminExist = await client.query('SELECT id FROM users WHERE email = $1', ['admin@gusmedia.com']);
     if (adminExist.rows.length === 0) {
       const bcrypt = require('bcryptjs');
       const hash = await bcrypt.hash('Admin12345!', 10);
       await client.query(
-        'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)',
-        ['Admin', 'admin@proximedia.com', hash, 'ADMIN']
+        'INSERT INTO users (name, email, password, role, is_active) VALUES ($1, $2, $3, $4, $5)',
+        ['Admin GUSMEDIA', 'admin@gusmedia.com', hash, 'ADMIN', true]
       );
-      console.log('  ✅ Admin user created (email: admin@proximedia.com)');
+      console.log('  ✅ Admin user created (email: admin@gusmedia.com)');
     } else {
       console.log('  ⏭️  Admin user already exists');
     }

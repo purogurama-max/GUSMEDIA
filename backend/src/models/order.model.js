@@ -206,6 +206,95 @@ class OrderModel {
     const { rows } = await db.query(query, [upperStatus, id]);
     return rows[0] || null;
   }
+
+  static async updateOrder(id, { items, discount, tax, notes }) {
+    // Check if invoice exists for this order
+    const invCheck = await db.query('SELECT id FROM invoices WHERE order_id = $1', [id]);
+    if (invCheck.rows.length > 0) {
+      throw new Error('Order tidak dapat diubah karena invoice sudah terbentuk!');
+    }
+
+    const client = await db.pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      if (items && Array.isArray(items) && items.length > 0) {
+        // Delete existing items
+        await client.query('DELETE FROM order_items WHERE order_id = $1', [id]);
+
+        let subtotal = 0;
+        for (const item of items) {
+          const prodRes = await client.query('SELECT id, price FROM products WHERE id = $1', [item.product_id]);
+          const prod = prodRes.rows[0] || {};
+          const price = Number(item.price !== undefined ? item.price : prod.price || 0);
+          const qty = parseInt(item.quantity, 10) || 1;
+          const itemSubtotal = price * qty;
+          subtotal += itemSubtotal;
+
+          await client.query(
+            `INSERT INTO order_items (order_id, product_id, quantity, price, subtotal)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [id, item.product_id, qty, price, itemSubtotal]
+          );
+        }
+
+        const currentOrd = await client.query('SELECT discount, tax FROM orders WHERE id = $1', [id]);
+        const discNum = discount !== undefined ? Number(discount) : Number(currentOrd.rows[0].discount);
+        const taxNum = tax !== undefined ? Number(tax) : Number(currentOrd.rows[0].tax);
+        const grandTotal = Math.max(0, subtotal - discNum + taxNum);
+
+        await client.query(
+          `UPDATE orders
+           SET subtotal = $1, discount = $2, tax = $3, grand_total = $4, notes = COALESCE($5, notes), updated_at = CURRENT_TIMESTAMP
+           WHERE id = $6`,
+          [subtotal, discNum, taxNum, grandTotal, notes !== undefined ? notes : null, id]
+        );
+      } else {
+        const currentOrd = await client.query('SELECT subtotal, discount, tax FROM orders WHERE id = $1', [id]);
+        const subtotal = Number(currentOrd.rows[0].subtotal);
+        const discNum = discount !== undefined ? Number(discount) : Number(currentOrd.rows[0].discount);
+        const taxNum = tax !== undefined ? Number(tax) : Number(currentOrd.rows[0].tax);
+        const grandTotal = Math.max(0, subtotal - discNum + taxNum);
+
+        await client.query(
+          `UPDATE orders
+           SET discount = $1, tax = $2, grand_total = $3, notes = COALESCE($4, notes), updated_at = CURRENT_TIMESTAMP
+           WHERE id = $5`,
+          [discNum, taxNum, grandTotal, notes !== undefined ? notes : null, id]
+        );
+      }
+
+      await client.query('COMMIT');
+      return await this.findById(id);
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async deleteOrder(id) {
+    // Check if invoice exists for this order
+    const invCheck = await db.query('SELECT id FROM invoices WHERE order_id = $1', [id]);
+    if (invCheck.rows.length > 0) {
+      throw new Error('Order tidak dapat dihapus karena invoice telah terbentuk!');
+    }
+
+    const client = await db.pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('DELETE FROM order_items WHERE order_id = $1', [id]);
+      const res = await client.query('DELETE FROM orders WHERE id = $1 RETURNING id', [id]);
+      await client.query('COMMIT');
+      return res.rows[0] || null;
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
 }
 
 module.exports = OrderModel;

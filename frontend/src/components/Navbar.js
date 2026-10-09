@@ -5,14 +5,9 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-slate-200/80 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-blue-500/20">
-              <img src="/logo.jpg" alt="PROXIMEDIA Logo" className="w-full h-full object-cover" />
-            </div>
-            <Link href="/" className="text-xl font-extrabold tracking-tight text-slate-900">
-              PROXI<span className="text-[#2D9CFF]">MEDIA</span>
-            </Link>
-          </div>
+          <Link href="/" className="flex items-center py-1">
+            <img src="/logo.jpg" alt="GUSMEDIA Logo" className="h-14 w-auto object-contain" />
+          </Link>
           
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
             <Link href="/" className="hover:text-[#2D9CFF] transition-colors">Home</Link>

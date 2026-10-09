@@ -81,3 +81,42 @@ export async function updateOrderStatusApi(id, status, customToken) {
     return { success: false, message: error.message };
   }
 }
+
+export async function updateOrderApi(id, orderData, customToken) {
+  try {
+    const token = customToken || getToken();
+    const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error(`Error updating order ${id}:`, error);
+    return { success: false, message: error.message };
+  }
+}
+
+export async function deleteOrderApi(id, customToken) {
+  try {
+    const token = customToken || getToken();
+    const res = await fetch(`${API_BASE_URL}/orders/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error(`Error deleting order ${id}:`, error);
+    return { success: false, message: error.message };
+  }
+}

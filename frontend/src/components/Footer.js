@@ -5,14 +5,9 @@ export default function Footer() {
     <footer className="bg-white border-t border-slate-200/80 text-slate-600 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm">
-              <img src="/logo.jpg" alt="PROXIMEDIA Logo" className="w-full h-full object-cover" />
-            </div>
-            <span className="text-lg font-extrabold text-slate-900">
-              PROXI<span className="text-[#2D9CFF]">MEDIA</span>
-            </span>
-          </div>
+          <Link href="/" className="inline-block">
+            <img src="/logo.jpg" alt="GUSMEDIA Logo" className="h-12 w-auto object-contain" />
+          </Link>
           <p className="text-sm leading-relaxed text-slate-500">
             Empowering modern enterprises with scalable software engineering, cloud architectures, and innovative SaaS solutions.
           </p>
@@ -42,14 +37,14 @@ export default function Footer() {
           <h4 className="text-sm font-bold text-slate-900 mb-4">Contact Info</h4>
           <ul className="space-y-2 text-sm font-medium text-slate-500">
             <li>Jakarta Tech Hub, Level 14</li>
-            <li>info@proximedia.com</li>
+            <li>info@gusmedia.com</li>
             <li>+62 21 5558 9000</li>
           </ul>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-6 border-t border-slate-100 text-xs text-center text-slate-400 font-medium">
-        © {new Date().getFullYear()} PROXIMEDIA. All rights reserved.
+        © {new Date().getFullYear()} GUSMEDIA. All rights reserved.
       </div>
     </footer>
   );

@@ -41,14 +41,11 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl relative z-10">
         {/* Brand Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-xl shadow-blue-500/30 mx-auto mb-4">
-            <img src="/logo.jpg" alt="PROXIMEDIA Logo" className="w-full h-full object-cover" />
+          <div className="flex justify-center mb-4">
+            <img src="/logo.jpg" alt="GUSMEDIA Logo" className="h-12 w-auto object-contain" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            PROXI<span className="text-cyan-400">MEDIA</span> Admin
-          </h1>
           <p className="text-xs text-slate-400 font-medium mt-1">
-            Masuk ke Panel Manajemen Perusahaan Software
+            Masuk ke Panel Manajemen Admin GUSMEDIA
           </p>
         </div>
 
@@ -80,7 +77,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@proximedia.com"
+                placeholder="admin@gusmedia.com"
                 className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-cyan-500 transition-all font-medium"
               />
             </div>
@@ -124,7 +121,7 @@ export default function AdminLoginPage() {
             Default Demo Kredensial
           </div>
           <div className="text-xs text-slate-300 font-mono">
-            Email: <span className="text-cyan-400">admin@proximedia.com</span>
+            Email: <span className="text-cyan-400">admin@gusmedia.com</span>
           </div>
           <div className="text-xs text-slate-300 font-mono">
             Password: <span className="text-cyan-400">Admin12345!</span>

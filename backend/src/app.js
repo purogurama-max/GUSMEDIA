@@ -12,6 +12,7 @@ const orderRoutes = require('./routes/order.routes');
 const invoiceRoutes = require('./routes/invoice.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const statsRoutes = require('./routes/stats.routes');
+const userRoutes = require('./routes/user.routes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -37,6 +38,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/users', userRoutes);
 
 
 // 404 Route Handler

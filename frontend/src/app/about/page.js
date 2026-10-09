@@ -5,7 +5,7 @@ export default function AboutPage() {
         <span className="text-xs font-bold px-3.5 py-1.5 rounded-full bg-blue-50 text-[#2D9CFF] border border-blue-200 shadow-sm">
           Our Story
         </span>
-        <h1 className="text-4xl font-black text-slate-900 mt-4">About PROXIMEDIA</h1>
+        <h1 className="text-4xl font-black text-slate-900 mt-4">About GUSMEDIA</h1>
         <p className="mt-4 text-slate-600 text-lg font-medium">
           We build enterprise software that powers modern businesses.
         </p>

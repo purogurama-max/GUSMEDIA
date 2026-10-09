@@ -21,7 +21,7 @@ export default function ContactPage() {
             </div>
             <div>
               <h3 className="font-bold text-slate-900">Email Us</h3>
-              <p className="text-sm font-medium text-slate-600 mt-0.5">info@proximedia.com</p>
+              <p className="text-sm font-medium text-slate-600 mt-0.5">info@gusmedia.com</p>
             </div>
           </div>
           <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-md flex items-start gap-4">

@@ -27,6 +27,13 @@ const login = async (req, res, next) => {
       });
     }
 
+    if (user.is_active === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.',
+      });
+    }
+
     const isMatch = await UserModel.comparePassword(password, user.password);
     if (!isMatch) {
       return res.status(401).json({

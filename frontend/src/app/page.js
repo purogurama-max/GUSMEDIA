@@ -20,7 +20,7 @@ export default async function Home() {
             Architecting Next-Generation <span className="text-[#2D9CFF]">Digital Platforms</span>
           </h1>
           <p className="mt-6 text-lg text-slate-600 max-w-2xl mx-auto font-medium">
-            PROXIMEDIA delivers high-performance custom software, ERP systems, and cloud architectures built for scalability and security.
+            GUSMEDIA delivers high-performance custom software, ERP systems, and cloud architectures built for scalability and security.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -104,7 +104,7 @@ export default async function Home() {
       {/* Why Choose Us */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-slate-900">Why Choose PROXIMEDIA</h2>
+          <h2 className="text-3xl font-extrabold text-slate-900">Why Choose GUSMEDIA</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-7 rounded-2xl bg-white border border-slate-200/90 shadow-md">

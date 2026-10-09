@@ -81,7 +81,9 @@ class InvoiceModel {
         i.payment_status,
         i.notes,
         i.created_at,
-        i.updated_at
+        i.updated_at,
+        COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.invoice_id = i.id AND p.status = 'PAID'), 0) AS total_paid,
+        (i.grand_total - COALESCE((SELECT SUM(p.amount) FROM payments p WHERE p.invoice_id = i.id AND p.status = 'PAID'), 0)) AS outstanding
       FROM invoices i
       JOIN orders o ON i.order_id = o.id
       JOIN customers c ON o.customer_id = c.id
@@ -220,6 +222,10 @@ class InvoiceModel {
     ];
 
     const result = await db.query(insertQuery, values);
+
+    // Update corresponding order status to COMPLETED
+    await db.query(`UPDATE orders SET status = 'COMPLETED', updated_at = CURRENT_TIMESTAMP WHERE id = $1`, [order_id]);
+
     return result.rows[0];
   }
 
@@ -240,6 +246,68 @@ class InvoiceModel {
     `;
     const result = await db.query(query, [statusUpper, id]);
     return result.rows[0];
+  }
+
+  // Recalculate payment_status based on total payments recorded
+  static async recalculatePaymentStatus(id) {
+    const invRes = await db.query('SELECT * FROM invoices WHERE id = $1', [id]);
+    if (invRes.rows.length === 0) {
+      return null;
+    }
+    const invoice = invRes.rows[0];
+    const grandTotal = parseFloat(invoice.grand_total);
+
+    const paidRes = await db.query(
+      `SELECT COALESCE(SUM(amount), 0) AS total_paid FROM payments WHERE invoice_id = $1 AND status = 'PAID'`,
+      [id]
+    );
+    const totalPaid = parseFloat(paidRes.rows[0].total_paid);
+
+    let newStatus = 'UNPAID';
+    if (totalPaid <= 0) {
+      newStatus = 'UNPAID';
+    } else if (totalPaid < grandTotal) {
+      newStatus = 'PARTIAL';
+    } else {
+      newStatus = 'PAID';
+    }
+
+    const updateRes = await db.query(
+      `UPDATE invoices SET payment_status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
+      [newStatus, id]
+    );
+    const updatedInvoice = updateRes.rows[0];
+    updatedInvoice.total_paid = totalPaid;
+    updatedInvoice.outstanding = Math.max(0, grandTotal - totalPaid);
+    return updatedInvoice;
+  }
+
+  // Delete invoice and associated payments
+  static async delete(id) {
+    const client = await db.pool.connect();
+    try {
+      await client.query('BEGIN');
+
+      const invRes = await client.query('SELECT * FROM invoices WHERE id = $1', [id]);
+      if (invRes.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return null;
+      }
+
+      // Delete payments for this invoice
+      await client.query('DELETE FROM payments WHERE invoice_id = $1', [id]);
+
+      // Delete the invoice record
+      const deleteRes = await client.query('DELETE FROM invoices WHERE id = $1 RETURNING *', [id]);
+
+      await client.query('COMMIT');
+      return deleteRes.rows[0];
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 }
 
